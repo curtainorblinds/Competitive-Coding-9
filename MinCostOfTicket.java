@@ -133,3 +133,41 @@ class MinCostOfTicket3 {
         return dp[last];
     }
 }
+
+//------------------------------------ Solution 4 -----------------------------------
+class MinCostOfTicket4 {
+    /**
+     * Making above solution generic if more pass options with different duration were provided
+     * by looping through passes array and finding minimum cost among all pass options.
+     *
+     * TC: O(mk) m total pass options and k <= 365 days. For given problem m = 3 hence this could
+     *       be considered constant as well
+     * SC: O(1) max length of DP array which is k <= 365 days. hence considered constant
+     */
+    public int mincostTickets(int[] days, int[] costs) {
+        int first = days[0];
+        int last = days[days.length - 1];
+        int[] dp = new int[last + 1];
+        int[] passes = {1, 7, 30};
+
+        int day = 0; // 1st entry/day at index 0 in days array
+        for (int i = first; i < dp.length; i++) {
+            if (i < days[day]) { //no entry for day = i index in days array so copy previous dp value
+                dp[i] = dp[i - 1];
+            } else { // i will always be equal to days[day]
+                dp[i] = Integer.MAX_VALUE;
+
+                for (int j = 0; j < passes.length; j++) {//explore of the passes
+                    int prev = 0; //default value incase dp looks up a negative previous idx for a given pass
+                    if (i  - passes[j] >= 0) {
+                        prev = dp[i - passes[j]]; //only when previous idx exists in dp array
+                    }
+                    dp[i] = Math.min(dp[i], prev + costs[j]);
+                }
+                day++; //next entry in the days array
+            }
+        }
+
+        return dp[last];
+    }
+}
